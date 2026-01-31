@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ORM Learning Platform</title>
+  <style>
+    :root {
+      --bg: #f6f4f0;
+      --card: #ffffff;
+      --text: #1b1b1b;
+      --muted: #5f5f5f;
+      --accent: #d97642;
+      --shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Georgia", "Times New Roman", serif;
+      background: radial-gradient(circle at top, #fff8ef, var(--bg));
+      color: var(--text);
+    }
+    header {
+      padding: 40px 24px 16px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 2.4rem;
+      letter-spacing: 0.02em;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+    }
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 48px;
+      display: grid;
+      gap: 24px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 18px 18px 20px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(217,118,66,0.12);
+      color: var(--accent);
+      font-size: 0.8rem;
+      margin-right: 6px;
+    }
+    .meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin: 6px 0 10px;
+    }
+    button {
+      border: none;
+      background: var(--accent);
+      color: white;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .loading {
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ORM Learning Platform</h1>
+    <p>Seeded data pulled from REST endpoints</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>Available courses</h2>
+      <p class="meta">Pulled from <code>/api/courses</code></p>
+      <div id="courses" class="grid">
+        <div class="loading">Loading courses...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Categories</h2>
+      <p class="meta">Pulled from <code>/api/categories</code></p>
+      <div id="categories" class="grid">
+        <div class="loading">Loading categories...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Teachers</h2>
+      <p class="meta">Pulled from <code>/api/teachers</code></p>
+      <div id="teachers" class="grid">
+        <div class="loading">Loading teachers...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Manual refresh</h2>
+      <button id="reload">Reload data</button>
+    </section>
+  </main>
+
+  <script>
+    const coursesEl = document.getElementById('courses');
+    const categoriesEl = document.getElementById('categories');
+    const teachersEl = document.getElementById('teachers');
+    const reloadBtn = document.getElementById('reload');
+
+    async function loadJson(url) {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+      return response.json();
+    }
+
+    function renderCourses(courses) {
+      coursesEl.innerHTML = '';
+      if (courses.length === 0) {
+        coursesEl.innerHTML = '<div class="loading">No courses yet.</div>';
+        return;
+      }
+      courses.forEach(course => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const tags = (course.tags || []).map(tag => `<span class="badge">${tag}</span>`).join('');
+        card.innerHTML = `
+          <h3>${course.title}</h3>
+          <div class="meta">${course.categoryName || 'No category'} • ${course.teacherName || 'No teacher'}</div>
+          <p>${course.description || ''}</p>
+          <div>${tags}</div>
+        `;
+        coursesEl.appendChild(card);
+      });
+    }
+
+    function renderCategories(categories) {
+      categoriesEl.innerHTML = '';
+      if (categories.length === 0) {
+        categoriesEl.innerHTML = '<div class="loading">No categories yet.</div>';
+        return;
+      }
+      categories.forEach(category => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${category.name}</h3>`;
+        categoriesEl.appendChild(card);
+      });
+    }
+
+    function renderTeachers(teachers) {
+      teachersEl.innerHTML = '';
+      if (teachers.length === 0) {
+        teachersEl.innerHTML = '<div class="loading">No teachers yet.</div>';
+        return;
+      }
+      teachers.forEach(teacher => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<h3>${teacher.name}</h3><div class="meta">${teacher.email}</div>`;
+        teachersEl.appendChild(card);
+      });
+    }
+
+    async function loadAll() {
+      try {
+        const [courses, categories, teachers] = await Promise.all([
+          loadJson('/api/courses'),
+          loadJson('/api/categories'),
+          loadJson('/api/teachers')
+        ]);
+        renderCourses(courses);
+        renderCategories(categories);
+        renderTeachers(teachers);
+      } catch (error) {
+        coursesEl.innerHTML = `<div class="loading">${error.message}</div>`;
+        categoriesEl.innerHTML = `<div class="loading">${error.message}</div>`;
+        teachersEl.innerHTML = `<div class="loading">${error.message}</div>`;
+      }
+    }
+
+    reloadBtn.addEventListener('click', loadAll);
+    loadAll();
+  </script>
+</body>
+</html>
