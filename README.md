@@ -49,6 +49,8 @@ mvn spring-boot:run
 Open:
 - UI: `http://localhost:8080`
 - API: `http://localhost:8080/api/courses`
+- <img width="400" height="400" alt="изображение" src="https://github.com/user-attachments/assets/2615620e-18b2-4af5-89bd-4441b2587d14" />
+
 
 ## Docker Compose
 
@@ -72,19 +74,19 @@ Docker Compose reads `.env` for variable substitution and falls back to the defa
 
 Base URL: `/api`
 
-- `GET /api/courses` � list courses (summary)
-- `GET /api/courses/{id}` � course with modules and lessons
-- `GET /api/categories` � list categories
-- `GET /api/teachers` � list teachers
+- `GET /api/courses` — list courses (summary)
+- `GET /api/courses/{id}` — course with modules and lessons
+- `GET /api/categories` — list categories
+- `GET /api/teachers` — list teachers
 
 ## Architecture
 
-- `model/` � JPA entities matching the ER diagram (15+ entities, relations, lazy loading)
-- `repository/` � Spring Data JPA repositories
-- `service/` � business logic for courses, enrollments, assignments, quizzes
-- `web/` � REST controllers + DTOs
-- `config/` � data seeder that inserts initial sample data
-- `static/index.html` � simple UI consuming the API
+- `model/` — JPA entities matching the ER diagram (15+ entities, relations, lazy loading)
+- `repository/` — Spring Data JPA repositories
+- `service/` — business logic for courses, enrollments, assignments, quizzes
+- `web/` — REST controllers + DTOs
+- `config/` — data seeder that inserts initial sample data
+- `static/index.html` — simple UI consuming the API
 
 ## Testing
 
@@ -110,3 +112,4 @@ src/main/resources
 src/test/java/com/example/orm
   OrmFinalIntegrationTest.java
 ```
+
