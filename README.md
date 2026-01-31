@@ -1,28 +1,28 @@
 # orm_final
 
-Spring Boot + JPA (PostgreSQL) learning platform with REST endpoints and a simple UI to verify seeded data.
+Платформа для обучения на Spring Boot + JPA (PostgreSQL) с REST API и простым веб-интерфейсом для проверки сэведенных (seed) данных.
 
-## Requirements
+## Требования
 
 - Java 21
 - Maven 3.9+
-- PostgreSQL 14+ (recommended: 16)
-- Docker (optional, for Testcontainers and docker-compose)
+- PostgreSQL 14+ (рекомендуется: 16)
+- Docker (опционально — для Testcontainers и docker-compose)
 
-## Installation
+## Установка
 
-1) Clone the repository and open the project folder.
-2) Make sure PostgreSQL is running.
-3) Create a database (example: `orm_final`).
+1) Клонируйте репозиторий и откройте папку проекта.
+2) Убедитесь, что PostgreSQL запущен.
+3) Создайте базу данных (например: `orm_final`).
 
-## Configuration
+## Конфигурация
 
-The app reads database settings from environment variables. If not set, defaults from `src/main/resources/application.yml` are used.
+Приложение читает настройки базы данных из переменных окружения. Если они не заданы, используются значения по умолчанию из `src/main/resources/application.yml`.
 
-Step-by-step:
+Пошагово:
 
-1) Ensure PostgreSQL is running and the database exists (example: `orm_final`).
-2) Set the environment variables in your shell:
+1) Убедитесь, что PostgreSQL запущен и база данных создана (например: `orm_final`).
+2) Установите переменные окружения в вашей оболочке:
 
 Bash/Zsh:
 
@@ -40,28 +40,16 @@ $env:DB_USER="postgres"
 $env:DB_PASSWORD="postgres"
 ```
 
-## Running locally
+## Запуск локально с помощью Docker Compose
 
-```
-mvn spring-boot:run
-```
-
-Open:
-- UI: `http://localhost:8080`
-- API: `http://localhost:8080/api/courses`
-- <img width="400" height="400" alt="изображение" src="https://github.com/user-attachments/assets/2615620e-18b2-4af5-89bd-4441b2587d14" />
-
-
-## Docker Compose
-
-1) Copy `.env.example` to `.env` and adjust values if needed.
-2) Run:
+1) Скопируйте `.env.example` в `.env` и при необходимости измените значения.
+2) Запустите:
 
 ```
 docker compose up --build
 ```
 
-Docker Compose reads `.env` for variable substitution and falls back to the defaults below:
+Docker Compose читает `.env` для подстановки переменных и использует следующие значения по умолчанию:
 - `DB_URL=jdbc:postgresql://db:5432/orm_final`
 - `DB_USER=postgres`
 - `DB_PASSWORD=postgres`
@@ -70,41 +58,47 @@ Docker Compose reads `.env` for variable substitution and falls back to the defa
 - `POSTGRES_PASSWORD=postgres`
 - `APP_PORT=8080`
 
+Откройте в браузере:
+- UI: `http://localhost:8080`
+- API: `http://localhost:8080/api/courses`
+- <img width="400" height="400" alt="изображение" src="https://github.com/user-attachments/assets/2615620e-18b2-4af5-89bd-4441b2587d14" />
+
+
 ## API
 
-Base URL: `/api`
+Базовый URL: `/api`
 
-- `GET /api/courses` — list courses (summary)
-- `GET /api/courses/{id}` — course with modules and lessons
-- `GET /api/categories` — list categories
-- `GET /api/teachers` — list teachers
+- `GET /api/courses` — список курсов (сводная информация)
+- `GET /api/courses/{id}` — курс с модулями и уроками
+- `GET /api/categories` — список категорий
+- `GET /api/teachers` — список преподавателей
 
-## Architecture
+## Архитектура
 
-- `model/` — JPA entities matching the ER diagram (15+ entities, relations, lazy loading)
-- `repository/` — Spring Data JPA repositories
-- `service/` — business logic for courses, enrollments, assignments, quizzes
-- `web/` — REST controllers + DTOs
-- `config/` — data seeder that inserts initial sample data
-- `static/index.html` — simple UI consuming the API
+- `model/` — JPA-сущности, соответствующие ER-диаграмме (15+ сущностей, связи, lazy loading)
+- `repository/` — репозитории Spring Data JPA
+- `service/` — бизнес-логика для курсов, зачислений, заданий, тестов
+- `web/` — REST-контроллеры + DTO
+- `config/` — data seeder, вставляющий начальные примерные данные
+- `static/index.html` — простой UI, использующий API
 
-## Testing
+## Тестирование
 
-Integration tests use Testcontainers and start a PostgreSQL container automatically.
+Интеграционные тесты используют Testcontainers и автоматически запускают контейнер PostgreSQL.
 
 ```
 mvn test
 ```
 
-## Project structure
+## Структура проекта
 
 ```
 src/main/java/com/example/orm
   OrmFinalApplication.java
-  model/          # JPA entities + enums
-  repository/     # Spring Data JPA repositories
-  service/        # Business logic services
-  web/            # REST controllers + DTOs
+  model/          # JPA-сущности + enum'ы
+  repository/     # Репозитории Spring Data JPA
+  service/        # Сервисы с бизнес-логикой
+  web/            # REST-контроллеры + DTO
   config/         # Data seeder
 src/main/resources
   application.yml
@@ -112,4 +106,3 @@ src/main/resources
 src/test/java/com/example/orm
   OrmFinalIntegrationTest.java
 ```
-
